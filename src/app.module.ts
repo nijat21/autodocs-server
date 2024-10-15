@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { DocumentModule } from './document/document.module.ts';
+import { DocumentModule } from './document/document.module.js';
 
 @Module({
   imports: [DocumentModule],

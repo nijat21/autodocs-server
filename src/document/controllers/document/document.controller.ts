@@ -5,8 +5,8 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { RepoLinkDto } from 'src/document/dtos/RepoLink.dto.js';
-import { DocumentService } from 'src/document/services/document/document.service.js';
+import { RepoLinkDto } from '../../dtos/RepoLink.dto.js';
+import { DocumentService } from '../../services/document/document.service.js';
 
 @Controller('document')
 export class DocumentController {
