@@ -1,8 +1,17 @@
 import { Module } from '@nestjs/common';
-import { DocumentModule } from './document/document.module.js';
+import { RepoModule } from './repository/repository.module.js';
+import { MongooseModule } from '@nestjs/mongoose';
+import { AuthModule } from './auth/auth.module.js';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 @Module({
-  imports: [DocumentModule],
+  imports: [
+    MongooseModule.forRoot(process.env.MONGODB_URI),
+    RepoModule,
+    AuthModule,
+  ],
   controllers: [],
   providers: [],
 })
