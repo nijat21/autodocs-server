@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { RepoModule } from './repository/repository.module.js';
 import { MongooseModule } from '@nestjs/mongoose';
+import { RepoModule } from './repository/repository.module.js';
 import { AuthModule } from './auth/auth.module.js';
 import * as dotenv from 'dotenv';
 
