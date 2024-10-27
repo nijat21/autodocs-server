@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
@@ -6,6 +10,7 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from '../schemas/user.schema.js';
 import { SignupDto } from '../dtos/signup.dto.js';
 import { LoginDto } from '../dtos/login.dto.js';
+import { UserType } from '../types/user.type.js';
 
 @Injectable()
 export class AuthService {
@@ -15,8 +20,15 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async register(signupDto: SignupDto): Promise<{ token: string }> {
+  async register(signupDto: SignupDto): Promise<UserType> {
     const { name, email, password, imgUrl } = signupDto;
+    const userFound = await this.userModel.findOne({ email });
+    if (userFound) {
+      throw new ConflictException(
+        'Email is already associated with an account',
+      );
+    }
+
     const salt = bcrypt.genSaltSync(10);
     const hashedPass = await bcrypt.hash(password, salt);
     const user = await this.userModel.create({
@@ -25,16 +37,17 @@ export class AuthService {
       password: hashedPass,
       imgUrl,
     });
-    const token = this.jwtService.sign({
-      id: user._id,
+    const token = this.jwtService.sign({ id: user._id });
+    const payload = {
+      token: token,
       name: user.name,
       email: user.email,
       imgUrl: user.imgUrl,
-    });
-    return { token };
+    };
+    return payload;
   }
 
-  async enter(loginDto: LoginDto): Promise<{ token: string }> {
+  async enter(loginDto: LoginDto): Promise<UserType> {
     const { email, password } = loginDto;
     const user = await this.userModel.findOne({ email });
     if (!user) throw new UnauthorizedException('Email is not registered');
@@ -43,10 +56,13 @@ export class AuthService {
     // If authenticated, return token
     const token = this.jwtService.sign({
       id: user._id,
+    });
+    const payload = {
+      token: token,
       name: user.name,
       email: user.email,
       imgUrl: user.imgUrl,
-    });
-    return { token };
+    };
+    return payload;
   }
 }

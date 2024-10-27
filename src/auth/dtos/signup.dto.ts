@@ -25,7 +25,7 @@ export class SignupDto {
     message: 'Password must contain at least one uppercase letter',
   })
   @Matches(/(?=.*\d)/, { message: 'Password must contain at least one number' })
-  @Matches(/(?=.*[!@#$%^&*])/, {
+  @Matches(/(?=.*\W)/, {
     message: 'Password must contain at least one special character',
   })
   readonly password: string;
